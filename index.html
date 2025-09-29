@@ -1,0 +1,1675 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Clash Royale Elixir Practice — Full</title>
+<link rel="preconnect" href="https://www.noff.gg">
+<style>
+  /* ---------- Core variables & layout ---------- */
+  :root{
+    --bg:#f4f6f8; --text:#0f1720; --card:#ffffff; --muted:#6b7280; --accent:#0b84ff;
+    --success:#16a34a; --danger:#ef4444; --glass: rgba(255,255,255,0.6);
+    --card-radius:12px; --shadow: 0 8px 24px rgba(2,6,23,0.04);
+    --outline: rgba(0,0,0,0.06);
+    --touch-size: 44px;
+  }
+  .theme-dark{ --bg:#0b0d10; --text:#e6eef6; --card:#0f1113; --muted:#94a3b8; --accent:#2ea1ff; --glass: rgba(255,255,255,0.02); --outline: rgba(255,255,255,0.04); }
+  .theme-red { --bg: #2b0d0f; --text:#ffe8e8; --card:#23090a; --muted:#ffb3b3; --accent:#ff6b6b; --glass: rgba(255,255,255,0.02); --outline: rgba(255,100,100,0.08); }
+  .theme-blue{ --bg:#071028; --text:#dceeff; --card:#071827; --muted:#93b7d6; --accent:#4aa3ff; --glass: rgba(255,255,255,0.02); --outline: rgba(74,163,255,0.06); }
+  .theme-green{ --bg:#07120c; --text:#e6fff0; --card:#07110b; --muted:#badfc0; --accent:#34d399; --glass: rgba(255,255,255,0.02); --outline: rgba(52,211,153,0.06); }
+  .theme-neon{ --bg:#00010a; --text:#e6f7ff; --card:#05050b; --muted:#bcdcff; --accent:#8b5cf6; --glass: rgba(255,255,255,0.02); --outline: rgba(139,92,246,0.08); }
+
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;transition:background .35s,color .35s}
+  .wrap{max-width:1150px;margin:12px auto;padding:14px}
+  header{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;align-items:center;margin-bottom:8px}
+  h1{margin:0;font-size:20px}
+  .sub{font-size:13px;color:var(--muted)}
+  .controls-row{display:flex;gap:8px;align-items:center}
+  .btn{background:var(--accent);color:white;border:none;padding:8px 12px;border-radius:10px;cursor:pointer;font-weight:700;box-shadow:0 6px 18px rgba(11,132,255,0.08);min-height:var(--touch-size)}
+  .small{padding:6px 8px;font-size:13px}
+  .ghost{background:transparent;border:1px solid var(--outline);color:var(--text);border-radius:10px;padding:6px 8px;cursor:pointer}
+  nav{display:flex;gap:8px;margin-top:8px;justify-content:center;flex-wrap:wrap}
+  .tab{background:var(--card);border:1px solid var(--outline);padding:8px 12px;border-radius:10px;cursor:pointer;color:var(--text);font-weight:700}
+  .tab.active{background:var(--accent);color:white;box-shadow:0 6px 18px rgba(11,132,255,0.12)}
+  main{margin-top:14px;display:grid;grid-template-columns:1fr 340px;gap:14px;min-height:60vh}
+  @media (max-width:980px){ main{grid-template-columns:1fr} }
+  .panel{background:var(--card);padding:14px;border-radius:var(--card-radius);border:1px solid var(--outline);box-shadow:var(--shadow);transition:transform .24s,opacity .28s}
+  .panel.hide{display:none}
+  /* QUIZ */
+  .quiz-top{display:flex;gap:12px;align-items:center;flex-wrap:wrap;justify-content:center}
+  .card-preview{width:140px;height:140px;display:flex;align-items:center;justify-content:center;border-radius:12px;background:var(--glass);overflow:hidden;border:1px solid var(--outline);position:relative;transition:transform .2s,filter .2s}
+  .card-preview img{max-width:120px;max-height:120px;object-fit:contain;display:block;transition:transform .2s}
+  .card-preview.impossible-zoom img{transform:scale(2);filter:blur(6px)}
+  .card-preview.impossible-zoom.step2 img{transform:scale(1.5);filter:blur(3px)}
+  .meta{min-width:240px;display:flex;flex-direction:column;gap:8px}
+  .input-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  input[type=number], input[type=text], select{padding:8px;border-radius:8px;border:1px solid var(--outline);min-width:120px;background:transparent;color:var(--text);height:var(--touch-size)}
+  .feedback{min-height:22px;font-weight:700;margin-top:8px;color:var(--muted)}
+  .hint{text-align:center;margin-top:8px;font-style:italic;color:var(--muted)}
+  .score-row{display:flex;justify-content:space-between;align-items:center;margin-top:12px;gap:12px;flex-wrap:wrap}
+  .score-bubble{background:rgba(11,132,255,0.08);color:var(--accent);padding:8px 10px;border-radius:999px;font-weight:800}
+  /* library */
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px;margin-top:12px}
+  .lib-card{background:var(--glass);border-radius:10px;padding:8px;text-align:center;border:1px solid var(--outline);cursor:pointer;transition:transform .12s}
+  .lib-card:hover{transform:translateY(-6px)}
+  .lib-card img{width:72px;height:72px;object-fit:contain}
+  .lib-name{font-size:13px;margin-top:6px;font-weight:700}
+  .elixir-row{display:flex;gap:6px;align-items:center;justify-content:center;margin-top:4px}
+  .elixir-row img{width:18px;height:18px}
+  /* feedback animations */
+  .correct { box-shadow: 0 0 0 8px rgba(22,163,74,0.12); transform: translateY(-4px); border-color: rgba(22,163,74,0.25) !important; }
+  .wrong { animation: shake .35s; box-shadow: 0 0 0 8px rgba(239,68,68,0.08); border-color: rgba(239,68,68,0.25) !important; }
+  @keyframes shake { 0%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-6px)}80%{transform:translateX(6px)}100%{transform:translateX(0)} }
+  /* timed mode small */
+  .timer{font-weight:900;padding:6px 8px;border-radius:8px;background:rgba(0,0,0,0.06)}
+  /* stats */
+  .stats{display:flex;flex-direction:column;gap:6px}
+  .stat-line{display:flex;justify-content:space-between;align-items:center;font-size:14px;padding:6px 8px;border-radius:8px;background:rgba(0,0,0,0.03)}
+  .control-block{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  /* elixir meter practice */
+  .hand{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:8px}
+  .hand .card-mini{width:70px;height:70px;background:var(--glass);display:flex;align-items:center;justify-content:center;border-radius:8px;padding:6px;border:1px solid var(--outline)}
+  .card-mini img{max-width:64px;max-height:64px}
+  /* modal & card detail */
+  .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.45);display:none;align-items:center;justify-content:center;z-index:999}
+  .modal{background:var(--card);padding:12px;border-radius:10px;max-width:720px;width:95%;max-height:86vh;overflow:auto;border:1px solid var(--outline)}
+  .pool-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin-top:8px}
+  .search{width:100%;padding:8px;border-radius:8px;border:1px solid var(--outline);margin-bottom:8px;background:transparent;color:var(--text)}
+  .selector-controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  /* small helpers */
+  .muted{font-size:12px;color:var(--muted)}
+  .tiny{font-size:12px}
+  /* analytics chart */
+  .spark{height:28px;width:110px;display:inline-block}
+  .bar-chart{display:flex;gap:6px;align-items:end;height:120px;padding:8px}
+  .bar{flex:1;border-radius:4px;background:linear-gradient(180deg,var(--accent), rgba(0,0,0,0.08));min-width:18px;display:flex;align-items:flex-end;justify-content:center;color:white;font-size:11px;padding-bottom:4px}
+  .bar-caption{font-size:12px;text-align:center;margin-top:6px}
+  /* responsive tweaks */
+  @media (max-width:520px){
+    .card-preview{width:140px;height:140px}
+    .meta{min-width:unset;width:100%}
+    header{flex-direction:column;align-items:flex-start}
+    nav{justify-content:space-between}
+    main{grid-template-columns:1fr}
+    .btn{padding:10px 14px}
+    input[type=number], input[type=text], select{min-width:100%}
+  }
+</style>
+</head>
+<body>
+<div class="wrap" id="appRoot">
+  <header>
+    <div>
+      <h1 id="appTitle">Clash Royale Elixir Practice</h1>
+      <div class="sub">Adaptive training · mistake review · analytics</div>
+    </div>
+
+    <div class="controls-row">
+      <div class="muted tiny" id="welcomeUser">Welcome</div>
+      <button id="themeToggle" class="ghost small" title="Open settings">⚙</button>
+    </div>
+  </header>
+
+  <nav id="topNav" aria-label="Main navigation">
+    <button id="navHome" class="tab active" data-target="homePanel">Home</button>
+    <button id="navQuiz" class="tab" data-target="quizPanel">Quiz</button>
+    <button id="navMatch" class="tab" data-target="matchPanel">Match Sim</button>
+    <button id="navMeter" class="tab" data-target="elixirPanel">Elixir Meter</button>
+    <button id="navLibrary" class="tab" data-target="libraryPanel">Library</button>
+    <button id="navReview" class="tab" data-target="reviewPanel">Mistakes</button>
+    <button id="navAnalytics" class="tab" data-target="analyticsPanel">Analytics</button>
+    <button id="navProfile" class="tab" data-target="profilePanel">Profile</button>
+    <button id="navSettings" class="tab" data-target="settingsPanel">Settings</button>
+  </nav>
+
+  <main>
+    <!-- Left column: main panels -->
+    <section>
+      <!-- HOME -->
+      <div id="homePanel" class="panel">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
+          <div>
+            <h2 style="margin:0">Welcome</h2>
+            <div class="muted tiny">Choose a mode to start practicing</div>
+          </div>
+          <div class="control-block">
+            <button id="homePlay" class="btn small">Start Quiz</button>
+            <button id="homeReview" class="ghost small">Review Mistakes</button>
+          </div>
+        </div>
+
+        <hr style="margin:12px 0;border:none;border-top:1px solid var(--outline)">
+
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <div style="flex:1;min-width:260px" class="panel">
+            <h3 style="margin-top:0">Quick Actions</h3>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <button id="qaQuiz" class="btn small">Play Quiz</button>
+              <button id="qaMatch" class="btn small">Match Sim</button>
+              <button id="qaMeter" class="btn small">Elixir Meter</button>
+              <button id="qaLibrary" class="btn small">Open Library</button>
+            </div>
+          </div>
+
+          <div style="flex:1;min-width:260px" class="panel">
+            <h3 style="margin-top:0">Daily Tip</h3>
+            <div id="tipBox" class="muted">Tip text</div>
+            <div style="margin-top:10px" class="tiny muted">Tip changes when you return to Home.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- QUIZ PANEL -->
+      <div id="quizPanel" class="panel hide" aria-live="polite">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+            <label class="muted tiny">Difficulty:</label>
+            <select id="difficulty">
+              <option value="easy">Easy (multiple choice)</option>
+              <option value="medium" selected>Medium (type elixir)</option>
+              <option value="hard">Hard (image only)</option>
+              <option value="impossible">Impossible (blurred / zoom)</option>
+            </select>
+
+            <label class="muted tiny">Filter:</label>
+            <label class="muted tiny"><input type="checkbox" class="filter" value="Troop" checked> Troops</label>
+            <label class="muted tiny"><input type="checkbox" class="filter" value="Building" checked> Buildings</label>
+            <label class="muted tiny"><input type="checkbox" class="filter" value="Spell" checked> Spells</label>
+
+            <label class="muted tiny">Adaptive:</label>
+            <input id="adaptiveToggle" type="checkbox" checked title="Prefer cards you miss more">
+          </div>
+
+          <div style="display:flex;gap:8px;align-items:center">
+            <label class="muted tiny">Timed:</label>
+            <input id="timedToggle" type="checkbox">
+            <label class="muted tiny">Length:</label>
+            <select id="timedLength">
+              <option value="30">30s</option><option value="60" selected>60s</option><option value="120">120s</option>
+            </select>
+            <div id="timer" class="timer" style="display:none">60</div>
+          </div>
+        </div>
+
+        <hr style="margin:12px 0;border:none;border-top:1px solid var(--outline)">
+
+        <div class="quiz-top" style="justify-content:flex-start">
+          <div class="card-preview" id="cardPreview"><img id="cardImage" src="" alt="card"></div>
+
+          <div class="meta">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div style="font-weight:900" id="displayName">—</div>
+              <div id="displayElixir" style="display:flex;align-items:center;gap:8px">?</div>
+            </div>
+
+            <div id="easyChoices" style="display:none;gap:8px;justify-content:center"></div>
+
+            <div class="input-row" id="inputRow">
+              <input id="guessInput" type="number" min="1" max="9" placeholder="Elixir (1-9)">
+              <button id="submitBtn" class="btn small">Submit</button>
+              <button id="hintBtn" class="ghost small">Hint</button>
+              <button id="skipBtn" class="ghost small">Skip</button>
+            </div>
+
+            <div class="feedback" id="feedback">Good luck!</div>
+            <div class="hint" id="hintText"></div>
+            <div class="muted tiny" id="triesText"></div>
+          </div>
+        </div>
+
+        <div class="score-row">
+          <div style="display:flex;gap:8px;align-items:center">
+            <div class="score-bubble" id="scoreBubble">Score: 0</div>
+            <div class="muted tiny">Attempts: <span id="totalAttempts">0</span></div>
+            <div class="muted tiny">Streak: <span id="streak">0</span></div>
+          </div>
+
+          <div style="display:flex;gap:8px;align-items:center">
+            <div class="muted tiny">High: <strong id="highScore">0</strong></div>
+            <div class="muted tiny">Recent: <span id="recentNames">—</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MATCH SIM -->
+      <div id="matchPanel" class="panel hide">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
+          <div>
+            <h3 style="margin:0">Match Simulation</h3>
+            <div class="muted tiny">Cards will be revealed one-by-one, then hidden — count the total elixir and submit your guess.</div>
+          </div>
+          <div class="control-block">
+            <label class="muted tiny">Reveal speed (ms):</label>
+            <select id="matchSpeed"><option value="1200">Slow</option><option value="800" selected>Normal</option><option value="450">Fast</option></select>
+            <label class="muted tiny">Show elixir while revealing:</label>
+            <input id="matchShowElixir" type="checkbox" checked>
+            <button id="startMatch" class="btn small">Start</button>
+          </div>
+        </div>
+
+        <hr style="margin:12px 0;border:none;border-top:1px solid var(--outline)">
+
+        <div id="matchArea" style="min-height:120px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:center"></div>
+
+        <div style="margin-top:10px">
+          <label class="muted tiny">Guess total elixir spent:</label>
+          <input id="matchGuess" class="search" type="number" min="0" style="width:120px">
+          <button id="submitMatchGuess" class="btn small">Submit Guess</button>
+          <div id="matchFeedback" class="muted tiny" style="margin-top:8px"></div>
+        </div>
+      </div>
+
+      <!-- ELIXIR METER -->
+      <div id="elixirPanel" class="panel hide">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div>
+            <h3 style="margin:0">Elixir Meter Practice</h3>
+            <div class="muted tiny">Generate 4-card hands, guess total elixir</div>
+          </div>
+          <div class="control-block">
+            <button id="generateHand" class="btn small">New Hand</button>
+            <input id="handInput" type="number" placeholder="Your guess" min="0" style="width:120px;padding:8px;border-radius:8px;border:1px solid var(--outline);background:transparent;color:var(--text);height:var(--touch-size)">
+            <button id="submitHand" class="btn small">Submit</button>
+            <button id="revealHand" class="ghost small">Show Answer</button>
+          </div>
+        </div>
+
+        <div class="hand" id="handArea" style="margin-top:12px"></div>
+        <div class="muted tiny" id="handFeedback" style="margin-top:8px"></div>
+      </div>
+
+      <!-- LIBRARY (main) -->
+      <div id="libraryPanel" class="panel hide">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div>
+            <h3 style="margin:0">Library</h3>
+            <div class="muted tiny">Browse and preview cards (click for stats)</div>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <input id="librarySearch" class="search" type="text" placeholder="Search library (name)">
+            <button id="libraryCompactToggle" class="ghost small">Compact</button>
+          </div>
+        </div>
+
+        <div id="libraryGrid" class="grid" style="margin-top:12px;max-height:520px;overflow:auto"></div>
+      </div>
+
+      <!-- MISTAKE REVIEW -->
+      <div id="reviewPanel" class="panel hide">
+        <h3 style="margin:0">Mistake Review</h3>
+        <div class="muted tiny" style="margin-top:8px">Cards you missed most — drill them to improve.</div>
+        <div id="mistakeList" style="margin-top:12px;display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px"></div>
+      </div>
+
+      <!-- ANALYTICS -->
+      <div id="analyticsPanel" class="panel hide">
+        <h3 style="margin:0">Analytics</h3>
+        <div class="muted tiny" style="margin-top:8px">Overview of accuracy and most-missed cards</div>
+        <div style="margin-top:12px">
+          <div class="stat-line"><div>Total Attempts</div><div id="an_total">0</div></div>
+          <div class="stat-line"><div>Accuracy</div><div id="an_accuracy">0%</div></div>
+          <div class="stat-line"><div>Avg Error</div><div id="an_avgerr">0</div></div>
+        </div>
+
+        <h4 style="margin-top:12px">Top Missed Cards</h4>
+        <div id="an_bar" class="bar-chart" style="margin-top:8px"></div>
+        <div id="an_bar_captions" style="display:flex;gap:6px;margin-top:6px"></div>
+
+        <h4 style="margin-top:12px">Recent Accuracy (sparkline)</h4>
+        <div id="an_spark" style="margin-top:8px"></div>
+      </div>
+
+      <!-- PROFILE -->
+      <div id="profilePanel" class="panel hide">
+        <h3 style="margin:0">Profile</h3>
+        <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+          <label>Username: <input id="profileName" type="text" value="Player"></label>
+          <label>Level: <span id="profileLevel">1</span></label>
+          <label>XP: <span id="profileXP">0</span></label>
+          <label>Rank: <span id="profileRank">Bronze</span></label>
+          <button id="resetProfile" class="ghost small">Reset Profile</button>
+        </div>
+
+        <hr style="margin:12px 0;border:none;border-top:1px solid var(--outline)">
+        <div class="stats">
+          <div class="stat-line"><div>Accuracy</div><div id="statAccuracy">0%</div></div>
+          <div class="stat-line"><div>Avg guess error</div><div id="statAvgError">0</div></div>
+          <div class="stat-line"><div>Longest streak</div><div id="statMaxStreak">0</div></div>
+          <div class="stat-line"><div>Games played</div><div id="statGames">0</div></div>
+          <div class="stat-line"><div>High score</div><div id="statHigh">0</div></div>
+        </div>
+      </div>
+
+      <!-- SETTINGS -->
+      <div id="settingsPanel" class="panel hide">
+        <h3 style="margin:0">Settings</h3>
+        <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+          <label>Theme:
+            <select id="themeSelect" class="search">
+              <option value="default">Default (Light)</option>
+              <option value="theme-dark">Dark</option>
+              <option value="theme-blue">Blue</option>
+              <option value="theme-red">Red</option>
+              <option value="theme-green">Green</option>
+              <option value="theme-neon">Neon</option>
+              <option value="custom">Custom</option>
+            </select>
+          </label>
+
+          <div id="customThemeControls" style="display:none;align-items:center;gap:8px">
+            <label class="tiny muted">Button</label><input id="customBtnColor" type="color" value="#0b84ff">
+            <label class="tiny muted">BG A</label><input id="customBgColorA" type="color" value="#f4f6f8">
+            <label class="tiny muted">BG B</label><input id="customBgColorB" type="color" value="#f4f6f8">
+            <label class="tiny muted">Outline</label><input id="customOutlineColor" type="color" value="#0a0a0a">
+            <button id="applyCustomTheme" class="btn small">Apply</button>
+            <button id="resetCustomTheme" class="ghost small">Reset</button>
+          </div>
+
+          <label>Show tips on Home:
+            <input id="settingsTips" type="checkbox" checked>
+          </label>
+
+          <label>Anti-spam lock (ms):
+            <input id="antiSpamMs" type="number" value="700" min="200" max="3000" style="width:90px">
+          </label>
+
+          <div style="flex:1"></div>
+          <button id="resetAll" class="ghost small">Full Reset (all stats)</button>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Right column: compact panels (sidebar) -->
+    <aside>
+      <div class="panel" id="miniProfile">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div>
+            <div class="muted tiny">Player</div>
+            <div style="font-weight:900" id="miniName">Player</div>
+          </div>
+          <div style="text-align:right">
+            <div class="muted tiny">High</div>
+            <div id="miniHigh" style="font-weight:900">0</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel" style="margin-top:12px">
+        <div style="font-weight:900">Quick Stats</div>
+        <div style="margin-top:8px">
+          <div class="muted tiny">Accuracy: <strong id="miniAccuracy">0%</strong></div>
+          <div class="muted tiny">Avg error: <strong id="miniAvgErr">0</strong></div>
+        </div>
+      </div>
+    </aside>
+  </main>
+</div>
+
+<!-- Card Detail Modal -->
+<div id="cardDetailBackdrop" class="modal-backdrop" aria-hidden="true">
+  <div class="modal" role="document" id="cardDetailModal">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <h3 id="detailTitle" style="margin:0">Card</h3>
+      <div style="display:flex;gap:8px;align-items:center">
+        <button id="detailDrill" class="btn small">Drill</button>
+        <button id="detailClose" class="ghost small">Close</button>
+      </div>
+    </div>
+    <div id="detailBody" style="margin-top:12px"></div>
+  </div>
+</div>
+
+<script>
+/* ------------------------------
+  Full card data (from user's list)
+  Format: [name, elixir (number|null for variable/mirror), category]
+  (Complete list included)
+--------------------------------*/
+const rawCards = [
+["Skeletons",1,"Troop"],["Ice Spirit",1,"Troop"],["Fire Spirit",1,"Troop"],["Electro Spirit",1,"Troop"],["Heal Spirit",1,"Troop"],
+["Goblins",2,"Troop"],["Bomber",2,"Troop"],["Spear Goblins",2,"Troop"],["Ice Golem",2,"Troop"],["Bats",2,"Troop"],
+["Wall Breakers",2,"Troop"],["Suspicious Bush",2,"Troop"],["Berserker",2,"Troop"],
+["Knight",3,"Troop"],["Archers",3,"Troop"],["Minions",3,"Troop"],["Skeleton Army",3,"Troop"],["Ice Wizard",3,"Troop"],["Guards",3,"Troop"],
+["Princess",3,"Troop"],["Miner",3,"Troop"],["Mega Minion",3,"Troop"],["Dart Goblin",3,"Troop"],["Goblin Gang",3,"Troop"],["Bandit",3,"Troop"],
+["Royal Ghost",3,"Troop"],["Skeleton Barrel",3,"Troop"],["Fisherman",3,"Troop"],["Firecracker",3,"Troop"],["Elixir Golem",3,"Troop"],
+["Little Prince",3,"Troop"],["Goblin Machine",3,"Troop"],
+["Valkyrie",4,"Troop"],["Musketeer",4,"Troop"],["Baby Dragon",4,"Troop"],["Mini P.E.K.K.A",4,"Troop"],["Hog Rider",4,"Troop"],
+["Dark Prince",4,"Troop"],["Lumberjack",4,"Troop"],["Battle Ram",4,"Troop"],["Inferno Dragon",4,"Troop"],["Electro Wizard",4,"Troop"],
+["Hunter",4,"Troop"],["Night Witch",4,"Troop"],["Zappies",4,"Troop"],["Flying Machine",4,"Troop"],["Magic Archer",4,"Troop"],
+["Mighty Miner",4,"Troop"],["Battle Healer",4,"Troop"],["Skeleton King",4,"Troop"],["Golden Knight",4,"Troop"],
+["Skeleton Dragons",4,"Troop"],["Mother Witch",4,"Troop"],["Phoenix",4,"Troop"],["Goblin Demolisher",4,"Troop"],["Rune Giant",4,"Troop"],
+["Giant",5,"Troop"],["Balloon",5,"Troop"],["Witch",5,"Troop"],["Barbarians",5,"Troop"],["Prince",5,"Troop"],["Wizard",5,"Troop"],
+["Minion Horde",5,"Troop"],["Bowler",5,"Troop"],["Executioner",5,"Troop"],["Ram Rider",5,"Troop"],["Rascals",5,"Troop"],["Cannon Cart",5,"Troop"],
+["Royal Hogs",5,"Troop"],["Electro Dragon",5,"Troop"],["Archer Queen",5,"Troop"],["Monk",5,"Troop"],["Goblinstein",5,"Troop"],
+["Giant Skeleton",6,"Troop"],["Royal Giant",6,"Troop"],["Sparky",6,"Troop"],["Elite Barbarians",6,"Troop"],["Goblin Giant",6,"Troop"],
+["Boss Bandit",6,"Troop"],["Spirit Empress",6,"Troop"],["P.E.K.K.A",7,"Troop"],["Lava Hound",7,"Troop"],["Royal Recruits",7,"Troop"],
+["Mega Knight",7,"Troop"],["Electro Giant",7,"Troop"],["Golem",8,"Troop"],["Three Musketeers",9,"Troop"],
+// Buildings
+["Cannon",3,"Building"],["Tombstone",3,"Building"],["Mortar",4,"Building"],["Bomb Tower",4,"Building"],["Tesla",4,"Building"],
+["Furnace",4,"Building"],["Goblin Cage",4,"Building"],["Goblin Drill",4,"Building"],["Goblin Hut",5,"Building"],["Inferno Tower",5,"Building"],
+["Elixir Collector",6,"Building"],["X-Bow",6,"Building"],["Barbarian Hut",7,"Building"],
+// Spells
+["Mirror", null,"Spell"],["Rage",2,"Spell"],["Zap",2,"Spell"],["The Log",2,"Spell"],["Barbarian Barrel",2,"Spell"],["Giant Snowball",2,"Spell"],
+["Goblin Curse",2,"Spell"],["Arrows",3,"Spell"],["Goblin Barrel",3,"Spell"],["Tornado",3,"Spell"],["Clone",3,"Spell"],["Earthquake",3,"Spell"],
+["Royal Delivery",3,"Spell"],["Void",3,"Spell"],["Vines",3,"Spell"],["Fireball",4,"Spell"],["Freeze",4,"Spell"],["Poison",4,"Spell"],
+["Graveyard",5,"Spell"],["Rocket",6,"Spell"],["Lightning",6,"Spell"]
+];
+
+/* alternate images (user-supplied) */
+const altImages = {
+  "suspicious bush":"https://www.noff.gg/clash-royale/res/img/cards/suspicious_bush.webp",
+  "berserker":"https://www.noff.gg/clash-royale/res/img/cards/berserker.webp",
+  "goblin machine":"https://www.noff.gg/clash-royale/res/img/cards/goblin_machine.webp",
+  "goblin demolisher":"https://www.noff.gg/clash-royale/res/img/cards/goblin_demolisher.webp",
+  "rune giant":"https://www.noff.gg/clash-royale/res/img/cards/rune_giant.webp",
+  "goblinstein":"https://www.noff.gg/clash-royale/res/img/cards/goblinstein.webp",
+  "boss bandit":"https://www.noff.gg/clash-royale/res/img/cards/boss_bandit.webp",
+  "spirit empress":"https://www.noff.gg/clash-royale/res/img/cards/spirit_empress.webp",
+  "goblin curse":"https://www.noff.gg/clash-royale/res/img/cards/goblin_curse.webp",
+  "void":"https://www.noff.gg/clash-royale/res/img/cards/void.webp",
+  "vines":"https://www.noff.gg/clash-royale/res/img/cards/vines.webp"
+};
+
+/* slug exceptions mapping to handle filenames */
+const slugExceptions = {
+  "mini p.e.k.k.a":"mini-pekka",
+  "p.e.k.a":"pekka",
+  "three musketeers":"three-musketeers",
+  "skeleton army":"skeleton-army",
+  "ice spirit":"ice-spirit",
+  "fire spirit":"fire-spirit",
+  "electro spirit":"electro-spirit",
+  "heal spirit":"heal-spirit",
+  "spear goblins":"spear-goblins",
+  "ice golem":"ice-golem",
+  "wall breakers":"wall-breakers",
+  "suspicious bush":"suspicious_bush",
+  "skeleton barrel":"skeleton-barrel",
+  "dart goblin":"dart-goblin",
+  "goblin gang":"goblin-gang",
+  "royal ghost":"royal-ghost",
+  "elixir golem":"elixir-golem",
+  "little prince":"little-prince",
+  "goblin machine":"goblin_machine",
+  "inferno dragon":"inferno-dragon",
+  "electro wizard":"electro-wizard",
+  "mega minion":"mega-minion",
+  "mega knight":"mega-knight",
+  "royal hogs":"royal-hogs",
+  "archer queen":"archer-queen",
+  "giant skeleton":"giant-skeleton",
+  "royal recruits":"royal-recruits",
+  "ram rider":"ram-rider",
+  "elixir collector":"elixir-collector",
+  "x-bow":"x-bow",
+  "the log":"the-log",
+  "barbarian barrel":"barbarian-barrel",
+  "giant snowball":"giant-snowball",
+  "goblin barrel":"goblin-barrel",
+  "royal delivery":"royal-delivery",
+  "goblin hut":"goblin-hut",
+  "cannon cart":"cannon-cart",
+  "skeletons":"skeletons",
+  "goblin demolisher":"goblin_demolisher",
+  "rune giant":"rune_giant",
+  "goblinstein":"goblinstein",
+  "boss bandit":"boss_bandit",
+  "spirit empress":"spirit_empress",
+  "goblin curse":"goblin_curse",
+  "void":"void",
+  "vines":"vines",
+  "suspicous bush":"suspicious_bush",
+  "mini p e k k a":"mini-pekka"
+};
+
+/* slugify helper */
+function slugify(name){
+  const key = name.toLowerCase().trim();
+  if(slugExceptions[key]) return slugExceptions[key];
+  return key.replace(/[’'`]/g,'').replace(/[^a-z0-9\s\-\.]/g,'').replace(/\s+/g,'-');
+}
+
+/* build card objects with image URLs */
+const cards = rawCards.map(([name, elixir, category])=>{
+  const slug = slugify(name);
+  const low = name.toLowerCase().trim();
+  const image = altImages[low] || `https://royaleapi.github.io/cr-api-assets/cards-150/${slug}.png`;
+  return { name, elixir, category, image, slug };
+});
+
+/* ------------------------------
+  App state
+--------------------------------*/
+const RECENT_KEEP = 6; // avoid repeats in recent
+let recent = [];
+let currentCard = null;
+let attemptsForCurrent = 0; // 0 -> first try, 1 -> second try used
+let score = 0;
+let totalAttempts = 0;
+let streak = 0;
+let maxStreak = Number(localStorage.getItem('cr_max_streak')||0);
+let gamesPlayed = Number(localStorage.getItem('cr_games')||0);
+let guesses = Number(localStorage.getItem('cr_guesses')||0);
+let correctGuesses = Number(localStorage.getItem('cr_correct')||0);
+let sumError = Number(localStorage.getItem('cr_sumErr')||0);
+let highScore = Number(localStorage.getItem('cr_high')||0);
+let timedMode = false;
+let timerInterval = null;
+let timeLeft = 0;
+
+/* Hide/reveal guard for quiz display */
+let elixirRevealed = false;
+
+/* adaptive toggle */
+let adaptiveOn = true;
+
+/* UI anti-spam */
+let busyLockUntil = 0; // timestamp to ignore rapid clicks
+
+/* DOM refs */
+function $id(id){ return document.getElementById(id); }
+const cardImage = $id('cardImage');
+const cardPreview = $id('cardPreview');
+const displayName = $id('displayName');
+const displayElixir = $id('displayElixir');
+const guessInput = $id('guessInput');
+const submitBtn = $id('submitBtn');
+const hintBtn = $id('hintBtn');
+const skipBtn = $id('skipBtn');
+const feedbackEl = $id('feedback');
+const hintText = $id('hintText');
+const triesText = $id('triesText');
+const scoreBubble = $id('scoreBubble');
+const totalAttemptsEl = $id('totalAttempts');
+const streakEl = $id('streak');
+const highScoreEl = $id('highScore');
+const recentNames = $id('recentNames');
+
+const difficultySelect = $id('difficulty');
+const filterCheckboxes = Array.from(document.querySelectorAll('.filter'));
+const timedToggle = $id('timedToggle');
+const timedLength = $id('timedLength');
+const timerEl = $id('timer');
+
+const tabButtons = document.querySelectorAll('nav .tab');
+const navHome = $id('navHome'), navQuiz = $id('navQuiz'), navMatch = $id('navMatch'), navMeter = $id('navMeter'), navLibrary = $id('navLibrary'), navReview = $id('navReview'), navAnalytics = $id('navAnalytics'), navProfile = $id('navProfile'), navSettings = $id('navSettings');
+const homePanel = $id('homePanel'), quizPanel = $id('quizPanel'), matchPanel = $id('matchPanel'), elixirPanel = $id('elixirPanel'), libraryPanel = $id('libraryPanel'), reviewPanel = $id('reviewPanel'), analyticsPanel = $id('analyticsPanel'), profilePanel = $id('profilePanel'), settingsPanel = $id('settingsPanel');
+
+const generateHandBtn = $id('generateHand'), submitHandBtn = $id('submitHand'), revealHandBtn = $id('revealHand');
+const handArea = $id('handArea'), handFeedback = $id('handFeedback');
+
+const libraryGrid = $id('libraryGrid'), librarySearch = $id('librarySearch');
+
+const matchArea = $id('matchArea'), matchSpeed = $id('matchSpeed'), matchShowElixir = $id('matchShowElixir'), startMatchBtn = $id('startMatch'), submitMatchGuessBtn = $id('submitMatchGuess'), matchGuess = $id('matchGuess'), matchFeedback = $id('matchFeedback');
+
+const themeSelect = $id('themeSelect'), themeToggle = $id('themeToggle'), miniName = $id('miniName'), miniHigh = $id('miniHigh'), miniAccuracy = $id('miniAccuracy'), miniAvgErr = $id('miniAvgErr');
+const homePlay = $id('homePlay'), homeReview = $id('homeReview'), qaQuiz = $id('qaQuiz'), qaMatch = $id('qaMatch'), qaMeter = $id('qaMeter'), qaLibrary = $id('qaLibrary');
+
+const profileName = $id('profileName'), profileLevel = $id('profileLevel'), profileXPEl = $id('profileXP'), profileRank = $id('profileRank'), resetProfile = $id('resetProfile');
+const statAccuracy = $id('statAccuracy'), statAvgError = $id('statAvgError'), statMaxStreak = $id('statMaxStreak'), statGames = $id('statGames'), statHigh = $id('statHigh');
+
+const libraryCompactToggle = $id('libraryCompactToggle');
+const tipBox = $id('tipBox');
+const settingsTips = $id('settingsTips'), antiSpamMs = $id('antiSpamMs'), resetAllBtn = $id('resetAll');
+
+const customControls = $id('customThemeControls');
+const customBtnColor = $id('customBtnColor');
+const customBgColorA = $id('customBgColorA');
+const customBgColorB = $id('customBgColorB');
+const customOutlineColor = $id('customOutlineColor');
+const applyCustomTheme = $id('applyCustomTheme');
+const resetCustomTheme = $id('resetCustomTheme');
+
+/* card detail modal refs */
+const cardDetailBackdrop = $id('cardDetailBackdrop');
+const detailTitle = $id('detailTitle');
+const detailBody = $id('detailBody');
+const detailDrill = $id('detailDrill');
+const detailClose = $id('detailClose');
+
+/* match sim state */
+let matchSequence = [], matchTimer = null, matchRunning = false, matchTotalElixir = 0;
+
+/* elixir meter state */
+let currentHand = [];
+
+/* per-card stats loader */
+function loadCardStats(slug){
+  try{
+    const raw = localStorage.getItem('card_stats_' + slug);
+    if(!raw) return { attempts:0, correct:0, wrong:0, sumErr:0 };
+    return JSON.parse(raw);
+  }catch(e){ return { attempts:0, correct:0, wrong:0, sumErr:0 }; }
+}
+function saveCardStats(slug, obj){
+  localStorage.setItem('card_stats_' + slug, JSON.stringify(obj));
+}
+
+/* global stats (recent accuracy history for sparkline) */
+function pushAccuracyHistory(val){
+  let arr = JSON.parse(localStorage.getItem('cr_history')||'[]');
+  arr.push(val?1:0);
+  if(arr.length>50) arr = arr.slice(arr.length-50);
+  localStorage.setItem('cr_history', JSON.stringify(arr));
+}
+
+/* ---------- Utility helpers ---------- */
+function clamp(v,a,b){ return Math.max(a, Math.min(b, v)); }
+function hexToRgb(hex){
+  if(!hex) return null;
+  const h = hex.replace('#','');
+  if(h.length===3) return { r: parseInt(h[0]+h[0],16), g: parseInt(h[1]+h[1],16), b: parseInt(h[2]+h[2],16) };
+  if(h.length===6) return { r: parseInt(h.substring(0,2),16), g: parseInt(h.substring(2,4),16), b: parseInt(h.substring(4,6),16) };
+  return null;
+}
+function shadeHex(hex, percent){
+  const rgb = hexToRgb(hex);
+  if(!rgb) return hex;
+  const f = (100 + percent)/100;
+  function clampByte(v){ return Math.max(0, Math.min(255, Math.round(v))); }
+  return '#' + [clampByte(rgb.r * f), clampByte(rgb.g * f), clampByte(rgb.b * f)].map(n=> n.toString(16).padStart(2,'0')).join('');
+}
+
+/* init */
+function init(){
+  attachEvents();
+  loadPreferences();
+  renderLibrary();
+  pickNextCard();
+  updateUI();
+  showPanel('homePanel');
+  showTip();
+}
+function attachEvents(){
+  // Nav buttons
+  tabButtons.forEach(btn=> btn.addEventListener('click',(e)=> showPanel(btn.dataset.target)));
+  navHome.addEventListener('click', ()=> showPanel('homePanel'));
+  navQuiz.addEventListener('click', ()=> showPanel('quizPanel'));
+  navMatch.addEventListener('click', ()=> showPanel('matchPanel'));
+  navMeter.addEventListener('click', ()=> showPanel('elixirPanel'));
+  navLibrary.addEventListener('click', ()=> showPanel('libraryPanel'));
+  navReview.addEventListener('click', ()=> showPanel('reviewPanel'));
+  navAnalytics.addEventListener('click', ()=> showPanel('analyticsPanel'));
+  navProfile.addEventListener('click', ()=> showPanel('profilePanel'));
+  navSettings.addEventListener('click', ()=> showPanel('settingsPanel'));
+
+  // quick actions
+  homePlay.addEventListener('click', ()=> showPanel('quizPanel'));
+  homeReview.addEventListener('click', ()=> showPanel('reviewPanel'));
+  qaQuiz.addEventListener('click', ()=> showPanel('quizPanel'));
+  qaMatch.addEventListener('click', ()=> showPanel('matchPanel'));
+  qaMeter.addEventListener('click', ()=> showPanel('elixirPanel'));
+  qaLibrary.addEventListener('click', ()=> showPanel('libraryPanel'));
+
+  // quiz controls
+  submitBtn.addEventListener('click', ()=> guardedCall(onSubmit));
+  guessInput.addEventListener('input', enforceGuessBounds);
+  guessInput.addEventListener('keydown',(e)=>{ if(e.key==='Enter') guardedCall(onSubmit); });
+  hintBtn.addEventListener('click', onHint);
+  skipBtn.addEventListener('click', ()=>{ guardedCall(()=>{ revealCurrentElixir(false); recordAttempt(false, currentCard, Math.abs((currentCard.elixir||0) - Number(guessInput.value||0))); totalAttempts++; updateScoreAndStats(false,0,false); setTimeout(()=>{ pickNextCard(); updateUI(); }, 700); }); });
+
+  difficultySelect.addEventListener('change', ()=> { generateEasyChoices(); updateNameVisibility(); resetImpossibleState(); });
+  filterCheckboxes.forEach(cb=>cb.addEventListener('change', ()=>{ renderLibrary(); pickNextCard(); updateUI(); }));
+
+  timedToggle.addEventListener('change', onTimedToggle);
+  timedLength.addEventListener('change', ()=>{ timerEl.textContent = timedLength.value; });
+
+  // library click will open detail modal
+  librarySearch.addEventListener('input', renderLibrary);
+  libraryCompactToggle.addEventListener('click', ()=> { libraryGrid.classList.toggle('compact'); });
+
+  // elixir meter (use arrow wrappers to avoid immediate invoke)
+  generateHandBtn.addEventListener('click', ()=> guardedCall(generateHand));
+  submitHandBtn.addEventListener('click', ()=> guardedCall(submitHand));
+  revealHandBtn.addEventListener('click', revealHand);
+
+  // match sim
+  startMatchBtn.addEventListener('click', () => guardedCall(startMatch));
+  submitMatchGuessBtn.addEventListener('click', ()=> guardedCall(onSubmitMatchGuess));
+
+  // profile
+  profileName.addEventListener('change', ()=> { localStorage.setItem('profileName', profileName.value); $id('miniName').textContent = profileName.value; });
+
+  resetProfile.addEventListener('click', ()=>{ if(confirm('Reset profile?')){ profileName.value='Player'; profileLevel.textContent='1'; profileXPEl.textContent='0'; profileRank.textContent='Bronze'; localStorage.removeItem('profileName'); localStorage.removeItem('profileXP'); localStorage.removeItem('profileLevel'); localStorage.removeItem('profileRank'); updateUI(); } });
+
+  // theme & settings
+  themeSelect.addEventListener('change', ()=> {
+    const v = themeSelect.value;
+    if(v === 'custom'){ toggleCustomControls(true); }
+    else { toggleCustomControls(false); }
+    applyTheme(v);
+  });
+  themeToggle.addEventListener('click', ()=> showPanel('settingsPanel'));
+  resetAllBtn.addEventListener('click', ()=> { if(confirm('Reset ALL saved stats and settings?')) fullReset(); });
+
+  // custom theme controls
+  applyCustomTheme.addEventListener('click', ()=> {
+    const btn = customBtnColor.value;
+    const bgA = customBgColorA.value;
+    const bgB = customBgColorB.value;
+    const outline = customOutlineColor.value;
+    localStorage.setItem('cr_custom_btn', btn);
+    localStorage.setItem('cr_custom_bg_a', bgA);
+    localStorage.setItem('cr_custom_bg_b', bgB);
+    localStorage.setItem('cr_custom_outline', outline);
+    themeSelect.value = 'custom';
+    toggleCustomControls(true);
+    applyTheme('custom');
+  });
+  resetCustomTheme.addEventListener('click', ()=> {
+    localStorage.removeItem('cr_custom_btn');
+    localStorage.removeItem('cr_custom_bg_a');
+    localStorage.removeItem('cr_custom_bg_b');
+    localStorage.removeItem('cr_custom_outline');
+    customBtnColor.value = '#0b84ff';
+    customBgColorA.value = '#f4f6f8';
+    customBgColorB.value = '#f4f6f8';
+    customOutlineColor.value = '#0a0a0a';
+    if(themeSelect.value === 'custom') applyTheme('custom');
+  });
+
+  // adaptive toggle
+  $id('adaptiveToggle').addEventListener('change', (e)=> adaptiveOn = e.target.checked);
+
+  // only keep safe global shortcut: toggle timed with 't' (but ignore it if typing in an input)
+  document.addEventListener('keydown',(e)=> {
+    const tag = (document.activeElement && document.activeElement.tagName) || '';
+    if(tag === 'INPUT' || tag === 'TEXTAREA' || document.activeElement && document.activeElement.isContentEditable) return;
+    if(e.key === 't'){ timedToggle.checked = !timedToggle.checked; onTimedToggle(); }
+    // NOTE: removed numeric shortcuts to avoid accidental difficulty changes
+  });
+
+  // card detail modal
+  detailClose.addEventListener('click', closeCardDetail);
+  cardDetailBackdrop.addEventListener('click', (ev)=> { if(ev.target === cardDetailBackdrop) closeCardDetail(); });
+
+  detailDrill.addEventListener('click', ()=> {
+    if(window._drillCard) {
+      closeCardDetail();
+      startDrill(window._drillCard);
+    }
+  });
+}
+
+/* ---------- Guarded call to prevent spam clicks ---------- */
+function guardedCall(fn){
+  const now = Date.now();
+  const lockMs = Number(antiSpamMs.value || 700);
+  if(now < busyLockUntil) return;
+  busyLockUntil = now + lockMs;
+  try{ fn(); } catch(e){ console.error(e); }
+}
+
+/* ------------------------------
+  Panels & UI helpers
+--------------------------------*/
+function showPanel(panelId){
+  [homePanel, quizPanel, matchPanel, elixirPanel, libraryPanel, reviewPanel, analyticsPanel, profilePanel, settingsPanel].forEach(p=>p.classList.add('hide'));
+  document.querySelectorAll('nav .tab').forEach(t=> t.classList.remove('active'));
+  const mapping = {
+    homePanel: $id('navHome'),
+    quizPanel: $id('navQuiz'),
+    matchPanel: $id('navMatch'),
+    elixirPanel: $id('navMeter'),
+    libraryPanel: $id('navLibrary'),
+    reviewPanel: $id('navReview'),
+    analyticsPanel: $id('navAnalytics'),
+    profilePanel: $id('navProfile'),
+    settingsPanel: $id('navSettings')
+  };
+  const panelEl = $id(panelId);
+  if(!panelEl) return;
+  panelEl.classList.remove('hide');
+  if(mapping[panelId]) mapping[panelId].classList.add('active');
+  if(panelId === 'quizPanel') { elixirRevealed = false; pickNextCard(); }
+  if(panelId === 'homePanel') { showTip(); }
+  if(panelId === 'libraryPanel') { renderLibrary(); }
+  if(panelId === 'profilePanel') { renderProfile(); }
+  if(panelId === 'reviewPanel') { renderMistakeList(); }
+  if(panelId === 'analyticsPanel') { renderAnalytics(); }
+}
+
+/* ------------------------------
+  Filters (no pool)
+--------------------------------*/
+function getFilteredPool(){
+  const activeCats = filterCheckboxes.filter(cb=>cb.checked).map(cb=>cb.value);
+  let pool = cards.filter(c => activeCats.includes(c.category));
+  return pool;
+}
+
+/* ------------------------------
+  Avoid repeats & adaptive selection
+--------------------------------*/
+function pickRandomAvoidRecent(pool){
+  if(!pool || pool.length===0) return null;
+  const weights = pool.map(c => {
+    if(!adaptiveOn) return 1;
+    const st = loadCardStats(c.slug);
+    const wrong = st.wrong || 0;
+    const attempts = st.attempts || 0;
+    const accuracyPenalty = attempts>0 ? ((attempts - (st.correct||0)) / attempts) : 0;
+    const weight = 1 + wrong*2 + accuracyPenalty*1.5;
+    return Math.max(0.5, weight);
+  });
+  const totalWeight = weights.reduce((s,w,i)=> s + (recent.includes(pool[i].slug)? w*0.3 : w), 0);
+  let r = Math.random()*totalWeight;
+  for(let i=0;i<pool.length;i++){
+    const w = recent.includes(pool[i].slug)? weights[i]*0.3 : weights[i];
+    if(r <= w) return pool[i];
+    r -= w;
+  }
+  return pool[Math.floor(Math.random()*pool.length)];
+}
+
+/* ------------------------------
+  Quiz picking & preview
+--------------------------------*/
+function renderElixirDisplay() {
+  if (!currentCard) {
+    displayElixir.innerHTML = `<span style="opacity:0.6">?</span>`;
+    return;
+  }
+  if (elixirRevealed) {
+    if (currentCard.elixir === null) {
+      displayElixir.innerHTML = `<span style="opacity:0.6">?</span>`;
+    } else {
+      displayElixir.innerHTML = `<strong>${currentCard.elixir}</strong>`;
+    }
+  } else {
+    displayElixir.innerHTML = `<span style="opacity:0.6">?</span>`;
+  }
+}
+
+function previewCard(card){
+  currentCard = card;
+  attemptsForCurrent = 0;
+  hintText.textContent = '';
+  feedbackEl.textContent = '';
+  guessInput.value = '';
+  elixirRevealed = false;
+  cardImage.src = card.image;
+  cardImage.onerror = ()=>{ cardImage.onerror=null; cardImage.src = blankSVG('no image'); };
+  resetImpossibleState();
+  updateNameVisibility();
+  renderElixirDisplay();
+  generateEasyChoices();
+  showPanel('quizPanel');
+}
+
+function pickNextCard(){
+  const pool = getFilteredPool();
+  const c = pickRandomAvoidRecent(pool);
+  if(!c){
+    currentCard = null;
+    displayName.textContent = 'No cards (check filters)';
+    cardImage.src = blankSVG('No image');
+    elixirRevealed = false;
+    renderElixirDisplay();
+    return;
+  }
+  currentCard = c;
+  attemptsForCurrent = 0;
+  hintText.textContent = '';
+  feedbackEl.textContent = '';
+  guessInput.value = '';
+  elixirRevealed = false;
+  recent.unshift(c.slug);
+  if(recent.length>RECENT_KEEP) recent = recent.slice(0,RECENT_KEEP);
+  recentNames.textContent = recent.map(s=> {
+    const f = cards.find(x=>x.slug===s); return f ? f.name : s;
+  }).join(', ');
+  cardImage.src = c.image;
+  cardImage.onerror = ()=>{ cardImage.onerror=null; cardImage.src = blankSVG('no image'); };
+  resetImpossibleState();
+  updateNameVisibility();
+  renderElixirDisplay();
+  generateEasyChoices();
+  enableInputs();
+}
+
+function updateNameVisibility(){
+  if(!currentCard) { displayName.textContent = '—'; return; }
+  if(difficultySelect.value === 'hard' || difficultySelect.value === 'impossible') displayName.textContent = '—';
+  else displayName.textContent = currentCard.name;
+}
+
+function resetImpossibleState(){
+  cardPreview.classList.remove('impossible-zoom');
+  cardPreview.classList.remove('step2');
+  if(difficultySelect.value === 'impossible'){
+    cardPreview.classList.add('impossible-zoom');
+  }
+}
+
+/* ------------------------------
+  Easy multiple choice generation
+--------------------------------*/
+function generateEasyChoices(){
+  const easyArea = $id('easyChoices');
+  if(!easyArea) return;
+  easyArea.innerHTML = '';
+  if(!currentCard || difficultySelect.value !== 'easy') { easyArea.style.display = 'none'; $id('inputRow').style.display='flex'; return; }
+  easyArea.style.display = 'flex';
+  $id('inputRow').style.display='none';
+  let options = [];
+  if(currentCard.elixir === null){
+    while(options.length < 4){
+      const n = clamp(Math.floor(Math.random()*6)+1,1,9);
+      if(!options.includes(n)) options.push(n);
+    }
+  } else {
+    const pool = getFilteredPool();
+    const elSet = Array.from(new Set(pool.filter(p=>p.elixir!==null).map(p=>p.elixir)));
+    const set = new Set([currentCard.elixir]);
+    while(set.size < 4){
+      let pick;
+      if(elSet.length>=3) pick = elSet[Math.floor(Math.random()*elSet.length)];
+      else pick = Math.floor(Math.random()*9)+1;
+      set.add(clamp(pick,1,9));
+    }
+    options = Array.from(set);
+  }
+  options = options.sort(()=>Math.random()-0.5);
+  options.forEach(opt=>{
+    const b = document.createElement('button');
+    b.className = 'ghost small';
+    b.textContent = String(opt);
+    b.addEventListener('click', ()=>{ guessInput.value = opt; guardedCall(onSubmit); });
+    easyArea.appendChild(b);
+  });
+}
+
+/* ------------------------------
+  Submit / scoring logic
+--------------------------------*/
+function enforceGuessBounds(){
+  let v = Number(guessInput.value);
+  if(Number.isNaN(v)) return;
+  if(v < 1) { guessInput.value = 1; }
+  if(v > 9) { guessInput.value = 9; }
+}
+
+function onSubmit(){
+  if(!currentCard) return;
+  disableInputs();
+
+  if(currentCard.elixir === null){
+    feedbackEl.textContent = 'Mirror (variable elixir). Skipping this card.';
+    totalAttempts++;
+    updateScoreAndStats(false,0,true);
+    recordAttempt(false, currentCard, 0);
+    setTimeout(()=>{ pickNextCard(); updateUI(); enableInputs(); }, 700);
+    return;
+  }
+
+  let raw = (guessInput.value+'').trim();
+  if(difficultySelect.value === 'easy' && raw===''){
+    feedbackEl.textContent = 'Choose an option';
+    enableInputs();
+    return;
+  }
+  if(raw===''){ feedbackEl.textContent = 'Enter a number (1-9)'; enableInputs(); return; }
+  let guess = Number(raw);
+  if(Number.isNaN(guess)){ feedbackEl.textContent = 'Enter a valid number'; enableInputs(); return; }
+  guess = clamp(guess,1,9);
+  guessInput.value = guess;
+
+  attemptsForCurrent++;
+  guesses++;
+  const err = Math.abs(guess - currentCard.elixir);
+  sumError += err;
+
+  if(guess === currentCard.elixir){
+    correctGuesses++;
+    if(attemptsForCurrent===1){
+      score += 1;
+      feedbackEl.textContent = `✅ Correct! +1`;
+      animatePreview('correct');
+    } else {
+      score += 0.5;
+      feedbackEl.textContent = `✅ Correct on 2nd try +0.5`;
+      animatePreview('correct');
+    }
+    // ---- GRANT XP for every correct guess ----
+    grantXP(1);
+    // reveal & record
+    revealCurrentElixir(true);
+    totalAttempts++;
+    streak++;
+    pushAccuracyHistory(1);
+    if(streak>maxStreak){ maxStreak = streak; localStorage.setItem('cr_max_streak', String(maxStreak)); }
+    recordAttempt(true, currentCard, err);
+    updateScoreAndStats(true,err,false);
+    setTimeout(()=>{ pickNextCard(); updateUI(); enableInputs(); }, 900);
+  } else {
+    // wrong
+    if(difficultySelect.value === 'impossible'){
+      if(attemptsForCurrent === 1){
+        feedbackEl.textContent = `❌ Wrong — image will unblur/zoom out. Try once more.`;
+        cardPreview.classList.remove('impossible-zoom');
+        cardPreview.classList.add('impossible-zoom','step2');
+        animatePreview('wrong');
+        enableInputs(true);
+        return;
+      } else {
+        feedbackEl.textContent = `❌ Wrong again — correct elixir: ${currentCard.elixir}`;
+        animatePreview('wrong');
+        revealCurrentElixir(false);
+        totalAttempts++;
+        streak = 0;
+        pushAccuracyHistory(0);
+        recordAttempt(false, currentCard, err);
+        updateScoreAndStats(false,err,false);
+        setTimeout(()=>{ pickNextCard(); updateUI(); enableInputs(); }, 1000);
+        return;
+      }
+    }
+
+    if(attemptsForCurrent===1){
+      feedbackEl.textContent = `❌ Wrong — try once more.`;
+      animatePreview('wrong');
+      enableInputs(true);
+      return;
+    } else {
+      feedbackEl.textContent = `❌ Wrong again — correct elixir: ${currentCard.elixir}`;
+      animatePreview('wrong');
+      revealCurrentElixir(false);
+      totalAttempts++;
+      streak = 0;
+      pushAccuracyHistory(0);
+      recordAttempt(false, currentCard, err);
+      updateScoreAndStats(false,err,false);
+      setTimeout(()=>{ pickNextCard(); updateUI(); enableInputs(); }, 1000);
+    }
+  }
+}
+
+/* GRANT XP */
+function grantXP(amount){
+  const prev = Number(localStorage.getItem('profileXP')||0);
+  const now = prev + (amount||0);
+  localStorage.setItem('profileXP', String(now));
+  profileXPEl.textContent = now;
+  // optional: level up (simple: 100 xp per level) — keep it simple for now
+  const lvl = Math.floor(now / 100) + 1;
+  profileLevel.textContent = lvl;
+  localStorage.setItem('profileLevel', String(lvl));
+}
+
+/* record per-card attempt */
+function recordAttempt(wasCorrect, card, err){
+  if(!card) return;
+  const s = loadCardStats(card.slug);
+  s.attempts = (s.attempts||0) + 1;
+  if(wasCorrect) s.correct = (s.correct||0) + 1;
+  else s.wrong = (s.wrong||0) + 1;
+  s.sumErr = (s.sumErr||0) + (err||0);
+  saveCardStats(card.slug, s);
+}
+
+/* reveal elixir on the display (show icon + number) */
+function revealCurrentElixir(correct){
+  if(!currentCard) return;
+  elixirRevealed = true;
+  renderElixirDisplay();
+  if(correct) cardPreview.classList.add('correct'); else cardPreview.classList.add('wrong');
+  setTimeout(()=>{ cardPreview.classList.remove('correct','wrong'); }, 900);
+}
+
+/* produce hint */
+function onHint(){
+  if(!currentCard || currentCard.elixir===null){ hintText.textContent = 'No hint available.'; return; }
+  const low = Math.max(1, currentCard.elixir - 1);
+  const high = Math.min(9, currentCard.elixir + 1);
+  hintText.textContent = `Hint: between ${low} and ${high} elixir.`;
+}
+
+/* animated feedback on preview */
+function animatePreview(kind){
+  cardPreview.classList.remove('correct','wrong');
+  void cardPreview.offsetWidth;
+  if(kind==='correct') cardPreview.classList.add('correct');
+  if(kind==='wrong') cardPreview.classList.add('wrong');
+  setTimeout(()=>{ cardPreview.classList.remove('correct','wrong'); }, 700);
+}
+
+/* disable/enable inputs to prevent spam */
+function disableInputs(){
+  submitBtn.disabled = true;
+  guessInput.disabled = true;
+  const ec = $id('easyChoices');
+  if(ec) ec.querySelectorAll('button').forEach(b=>b.disabled=true);
+  hintBtn.disabled = true;
+  skipBtn.disabled = true;
+}
+function enableInputs(allowShortDelay){
+  const delay = allowShortDelay ? 250 : 50;
+  setTimeout(()=>{
+    submitBtn.disabled = false;
+    guessInput.disabled = false;
+    const ec = $id('easyChoices');
+    if(ec) ec.querySelectorAll('button').forEach(b=>b.disabled=false);
+    hintBtn.disabled = false;
+    skipBtn.disabled = false;
+  }, delay);
+}
+
+/* ------------------------------
+  Score & Stats
+--------------------------------*/
+function updateScoreAndStats(wasCorrect, error, skipped){
+  if(score > highScore){ highScore = score; localStorage.setItem('cr_high', String(highScore)); }
+  localStorage.setItem('cr_sumErr', String(sumError));
+  localStorage.setItem('cr_guesses', String(guesses));
+  localStorage.setItem('cr_correct', String(correctGuesses));
+  localStorage.setItem('cr_high', String(highScore));
+  updateUI();
+}
+
+/* UI update */
+function updateUI(){
+  scoreBubble.textContent = `Score: ${Math.round(score*100)/100}`;
+  totalAttemptsEl.textContent = totalAttempts;
+  streakEl.textContent = streak;
+  highScoreEl.textContent = highScore;
+  $id('miniHigh').textContent = highScore;
+  recentNames.textContent = recent.map(s=>{ const f = cards.find(x=>x.slug===s); return f? f.name : s; }).join(', ') || '—';
+  statAccuracy.textContent = guesses>0 ? Math.round((correctGuesses/guesses)*100) + '%' : '0%';
+  statAvgError.textContent = guesses>0 ? (sumError/guesses).toFixed(2) : '0';
+  statMaxStreak.textContent = maxStreak;
+  statGames.textContent = gamesPlayed;
+  statHigh.textContent = highScore;
+  miniAccuracy.textContent = statAccuracy.textContent;
+  miniAvgErr.textContent = statAvgError.textContent;
+}
+
+/* ------------------------------
+  Timed Mode
+--------------------------------*/
+function onTimedToggle(){
+  timedMode = timedToggle.checked;
+  if(timedMode){
+    timeLeft = Number(timedLength.value);
+    timerEl.style.display = '';
+    timerEl.textContent = timeLeft;
+    startTimer();
+  } else {
+    stopTimer();
+    timerEl.style.display = 'none';
+  }
+}
+function startTimer(){
+  stopTimer();
+  timeLeft = Number(timedLength.value);
+  timerEl.textContent = timeLeft;
+  timerInterval = setInterval(()=>{
+    timeLeft--;
+    timerEl.textContent = timeLeft;
+    if(timeLeft<=0){
+      stopTimer();
+      endTimedSession();
+    }
+  },1000);
+}
+function stopTimer(){
+  if(timerInterval){ clearInterval(timerInterval); timerInterval=null; }
+}
+function endTimedSession(){
+  alert(`Time's up!\nScore: ${score}\nAttempts: ${totalAttempts}\nAccuracy: ${guesses>0?Math.round((correctGuesses/guesses)*100):0}%`);
+  if(score>highScore){ highScore = score; localStorage.setItem('cr_high', String(highScore)); }
+  score = 0; totalAttempts = 0; guesses = 0; correctGuesses = 0; sumError = 0; streak = 0;
+  gamesPlayed++;
+  localStorage.setItem('cr_games', String(gamesPlayed));
+  updateUI();
+  pickNextCard();
+}
+
+/* ------------------------------
+  Elixir icon generator & placeholder
+--------------------------------*/
+function elixirIcon(n){ const val = Number.isFinite(n)? Math.max(0,Math.min(9,n)) : 1; return `https://www.noff.gg/clash-royale/res/img/elixir/${val}.webp`; }
+function blankSVG(text){
+  const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='160' height='120'><rect width='100%' height='100%' fill='%23ddd'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' fill='%23666' font-size='12'>${text}</text></svg>`;
+  return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+}
+
+/* ------------------------------
+  Library rendering & card detail
+--------------------------------*/
+function renderLibrary(){
+  libraryGrid.innerHTML = '';
+  const q = (librarySearch.value || '').trim().toLowerCase();
+  const pool = getFilteredPool().sort((a,b)=>a.name.localeCompare(b.name));
+  for(const c of pool){
+    if(q && !c.name.toLowerCase().includes(q)) continue;
+    const div = document.createElement('div');
+    div.className = 'lib-card';
+    div.innerHTML = `
+      <div style="height:90px;display:flex;align-items:center;justify-content:center">
+        <img src="${c.image}" alt="${c.name}" onerror="this.onerror=null;this.src='${blankSVG('no image')}';">
+      </div>
+      <div class="lib-name">${c.name}</div>
+      <div class="elixir-row">${c.elixir===null? '<span>?</span>':'<span>'+c.elixir+'</span>'}</div>
+    `;
+    div.addEventListener('click', ()=> openCardDetail(c));
+    libraryGrid.appendChild(div);
+  }
+}
+
+/* open card detail modal */
+function openCardDetail(card){
+  window._drillCard = card;
+  detailTitle.textContent = card.name;
+  const st = loadCardStats(card.slug);
+  const accuracy = st.attempts>0 ? Math.round((st.correct||0)/st.attempts*100) : 0;
+  const avgErr = st.attempts>0 ? ((st.sumErr||0)/st.attempts).toFixed(2) : '—';
+  detailBody.innerHTML = `
+    <div style="display:flex;gap:12px;align-items:center">
+      <img src="${card.image}" alt="${card.name}" style="width:96px;height:96px;object-fit:contain;border-radius:8px;border:1px solid var(--outline)">
+      <div>
+        <div style="font-weight:700">${card.name}</div>
+        <div class="muted tiny">${card.elixir===null? '? Elixir' : card.elixir + ' Elixir'}</div>
+        <div style="margin-top:8px">
+          <div class="muted tiny">Attempts: <strong>${st.attempts||0}</strong></div>
+          <div class="muted tiny">Correct: <strong>${st.correct||0}</strong></div>
+          <div class="muted tiny">Wrong: <strong>${st.wrong||0}</strong></div>
+          <div class="muted tiny">Accuracy: <strong>${accuracy}%</strong></div>
+          <div class="muted tiny">Avg error: <strong>${avgErr}</strong></div>
+        </div>
+      </div>
+    </div>
+    <div style="margin-top:12px;display:flex;gap:8px">
+      <button id="detailDrillLocal" class="btn small">Drill this card (10 tries)</button>
+      <button id="detailClearStats" class="ghost small">Clear stats</button>
+    </div>
+  `;
+  cardDetailBackdrop.style.display = 'flex';
+  cardDetailBackdrop.setAttribute('aria-hidden','false');
+
+  // wire local modal buttons
+  $id('detailDrillLocal').addEventListener('click', ()=> {
+    closeCardDetail();
+    startDrill(card);
+  });
+  $id('detailClearStats').addEventListener('click', ()=> {
+    if(confirm('Clear stats for this card?')){ localStorage.removeItem('card_stats_' + card.slug); openCardDetail(card); updateUI(); }
+  });
+}
+
+/* close detail */
+function closeCardDetail(){ cardDetailBackdrop.style.display = 'none'; cardDetailBackdrop.setAttribute('aria-hidden','true'); window._drillCard = null; }
+
+/* start drill mode: repeat same card N times (does not change difficulty) */
+function startDrill(card){
+  if(!card) return;
+  currentCard = card;
+  attemptsForCurrent = 0;
+  elixirRevealed = false;
+  cardImage.src = card.image;
+  cardImage.onerror = ()=>{ cardImage.onerror=null; cardImage.src = blankSVG('no image'); };
+  updateNameVisibility();
+  renderElixirDisplay();
+  generateEasyChoices();
+  showPanel('quizPanel');
+}
+
+/* ------------------------------
+  Elixir Meter practice
+--------------------------------*/
+function generateHand(){
+  const pool = getFilteredPool();
+  if(pool.length < 4){ handFeedback.textContent = 'Not enough cards for a hand (check filters)'; return; }
+  handArea.innerHTML = '';
+  currentHand = [];
+  for(let i=0;i<4;i++){
+    const c = pool[Math.floor(Math.random()*pool.length)];
+    currentHand.push(c);
+    const div = document.createElement('div');
+    div.className = 'card-mini';
+    div.innerHTML = `<img src="${c.image}" alt="${c.name}" onerror="this.onerror=null;this.src='${blankSVG('no image')}';">`;
+    handArea.appendChild(div);
+  }
+  const total = currentHand.reduce((s,c)=> s + (c.elixir===null?0:c.elixir),0);
+  handArea.dataset.total = total;
+  handFeedback.textContent = 'Guess total elixir of these 4 cards.';
+  $id('handInput') && ($id('handInput').value = '');
+}
+function submitHand(){
+  if(currentHand.length===0){ handFeedback.textContent = 'Generate a hand first.'; return; }
+  const raw = ($id('handInput') ? $id('handInput').value.trim() : '');
+  if(raw===''){ handFeedback.textContent = 'Enter a number'; return; }
+  const guess = Number(raw);
+  if(Number.isNaN(guess)){ handFeedback.textContent = 'Enter a valid number'; return; }
+  const totalTrue = Number(handArea.dataset.total);
+  const err = Math.abs(guess - totalTrue);
+  if(guess === totalTrue){ handFeedback.textContent = `✅ Perfect! Total = ${totalTrue}.`; } else { handFeedback.textContent = `❌ Your guess ${guess}. Actual ${totalTrue}. Error ${err}.`; }
+}
+function revealHand(){ if(currentHand.length===0) return; const totalTrue = Number(handArea.dataset.total); handFeedback.textContent = `Cards total elixir: ${totalTrue}`; }
+
+/* ------------------------------
+  Match Simulation (reveal one card at a time, then hide)
+--------------------------------*/
+async function startMatch(){
+  if(matchRunning) return;
+  if(matchTimer) { clearTimeout(matchTimer); matchTimer = null; }
+  matchSequence = [];
+  matchArea.innerHTML = '';
+  matchTotalElixir = 0;
+  const pool = getFilteredPool();
+  if(pool.length === 0){ matchFeedback.textContent = 'No cards in pool (check filters)'; return; }
+  matchRunning = true;
+  matchFeedback.textContent = '';
+  const steps = Math.floor(Math.random()*5)+4; // 4-8 plays
+  let idx = 0;
+  const speed = Number(matchSpeed.value);
+  const showEl = matchShowElixir.checked;
+
+  // We'll show one card at a time: reveal image briefly, then replace it with a covered placeholder.
+  const placeholders = [];
+  for(let i=0;i<steps;i++){
+    const c = pool[Math.floor(Math.random()*pool.length)];
+    matchSequence.push(c);
+    // reveal image element
+    const elWrap = document.createElement('div');
+    elWrap.style.display='flex';
+    elWrap.style.flexDirection='column';
+    elWrap.style.alignItems='center';
+    elWrap.style.width='82px';
+    elWrap.style.padding='6px';
+    elWrap.style.borderRadius='8px';
+    elWrap.style.background= 'var(--glass)';
+    elWrap.style.transition = 'opacity .18s';
+    const img = document.createElement('img');
+    img.src = c.image;
+    img.alt = c.name;
+    img.style.maxWidth='64px';
+    img.style.maxHeight='64px';
+    img.onerror = ()=>{ img.src = blankSVG('no image'); };
+    const label = document.createElement('div');
+    label.style.fontSize='12px';
+    label.style.marginTop='6px';
+    label.textContent = showEl ? (c.elixir===null? '?' : c.elixir) : '•';
+    elWrap.appendChild(img);
+    elWrap.appendChild(label);
+    matchArea.appendChild(elWrap);
+
+    // wait briefly so user can see
+    await new Promise(res => setTimeout(res, speed));
+
+    // hide image (cover) — replace with covered placeholder
+    matchTotalElixir += (c.elixir===null?0:c.elixir);
+    elWrap.innerHTML = `<div style="width:64px;height:64px;display:flex;align-items:center;justify-content:center;border-radius:6px;background:rgba(0,0,0,0.06)">•</div><div style="font-size:12px;margin-top:6px">Card</div>`;
+    placeholders.push(elWrap);
+  }
+
+  // finished sequence
+  matchRunning = false;
+  matchFeedback.textContent = 'Sequence finished. Make your guess!';
+  // show placeholders (already added). user can now submit guess using matchTotalElixir
+}
+
+/* Submit match guess */
+function onSubmitMatchGuess(){
+  if(matchRunning){ matchFeedback.textContent = 'Wait for sequence to finish before guessing.'; return; }
+  const raw = matchGuess.value.trim();
+  if(raw===''){ matchFeedback.textContent = 'Enter a number'; return; }
+  const g = Number(raw);
+  if(Number.isNaN(g)){ matchFeedback.textContent = 'Enter a valid number'; return; }
+  const err = Math.abs(g - matchTotalElixir);
+  matchFeedback.textContent = `Actual: ${matchTotalElixir}. Your guess: ${g}. Error: ${err}.`;
+}
+
+/* ------------------------------
+  Theme & preferences
+--------------------------------*/
+function applyTheme(cls){
+  document.documentElement.classList.remove('theme-dark','theme-blue','theme-red','theme-green','theme-neon');
+
+  if(cls === 'custom'){
+    const btn = localStorage.getItem('cr_custom_btn') || customBtnColor.value || '#0b84ff';
+    const bgA = localStorage.getItem('cr_custom_bg_a') || customBgColorA.value || '#f4f6f8';
+    const bgB = localStorage.getItem('cr_custom_bg_b') || customBgColorB.value || '#f4f6f8';
+    const outline = localStorage.getItem('cr_custom_outline') || customOutlineColor.value || '#0a0a0a';
+    document.documentElement.style.setProperty('--accent', btn);
+    if(bgA && bgB && bgA !== bgB){
+      document.documentElement.style.setProperty('--bg', `linear-gradient(135deg, ${bgA}, ${bgB})`);
+    } else {
+      document.documentElement.style.setProperty('--bg', bgA || bgB || '#f4f6f8');
+    }
+    try{
+      const rgb = hexToRgb(bgA);
+      if(rgb){
+        const lum = (0.2126*rgb.r + 0.7152*rgb.g + 0.0722*rgb.b)/255;
+        if(lum < 0.45){
+          document.documentElement.style.setProperty('--card', shadeHex(bgA, 8));
+          document.documentElement.style.setProperty('--text', '#e6eef6');
+        } else {
+          document.documentElement.style.setProperty('--card', shadeHex(bgA, -8));
+          document.documentElement.style.setProperty('--text', '#0f1720');
+        }
+      }
+    }catch(e){}
+    document.documentElement.style.setProperty('--outline', outline);
+    localStorage.setItem('app_theme', 'custom');
+  } else {
+    document.documentElement.style.removeProperty('--accent');
+    document.documentElement.style.removeProperty('--bg');
+    document.documentElement.style.removeProperty('--card');
+    document.documentElement.style.removeProperty('--text');
+    document.documentElement.style.removeProperty('--outline');
+
+    if(cls && cls !== 'default'){
+      document.documentElement.classList.add(cls);
+    }
+    localStorage.setItem('app_theme', cls || 'default');
+  }
+  if(themeSelect && themeSelect.value !== (cls || 'default')) themeSelect.value = (cls || 'default');
+}
+
+function loadPreferences(){
+  const t = localStorage.getItem('app_theme') || 'default';
+  themeSelect.value = t;
+  const cbtn = localStorage.getItem('cr_custom_btn');
+  const cbgA = localStorage.getItem('cr_custom_bg_a');
+  const cbgB = localStorage.getItem('cr_custom_bg_b');
+  const cout = localStorage.getItem('cr_custom_outline');
+  if(cbtn) customBtnColor.value = cbtn;
+  if(cbgA) customBgColorA.value = cbgA;
+  if(cbgB) customBgColorB.value = cbgB;
+  if(cout) customOutlineColor.value = cout;
+  if(t === 'custom') { toggleCustomControls(true); } else { toggleCustomControls(false); }
+  applyTheme(t);
+
+  const savedName = localStorage.getItem('profileName') || 'Player';
+  profileName.value = savedName; miniName.textContent = savedName; $id('welcomeUser').textContent = `Logged in: ${savedName}`;
+  profileLevel.textContent = localStorage.getItem('profileLevel') || '1';
+  const xp = Number(localStorage.getItem('profileXP')||0);
+  profileXPEl.textContent = xp;
+  profileXPEl.dataset.value = String(xp);
+  profileXPEl.textContent = xp;
+  profileRank.textContent = localStorage.getItem('profileRank') || 'Bronze';
+  highScore = Number(localStorage.getItem('cr_high')||0);
+  highScoreEl.textContent = highScore;
+  statHigh.textContent = highScore;
+  gamesPlayed = Number(localStorage.getItem('cr_games')||0);
+  statGames.textContent = gamesPlayed;
+  maxStreak = Number(localStorage.getItem('cr_max_streak')||0);
+  statMaxStreak.textContent = maxStreak;
+}
+
+function toggleCustomControls(show){
+  customControls.style.display = show ? 'flex' : 'none';
+}
+
+/* full reset (settings + stats) */
+function fullReset(){
+  if(!confirm('This will clear all saved stats and settings. Continue?')) return;
+  localStorage.clear();
+  location.reload();
+}
+
+/* ------------------------------
+  Mistake Review & Analytics
+--------------------------------*/
+function renderMistakeList(){
+  const container = $id('mistakeList');
+  container.innerHTML = '';
+  const stats = cards.map(c => ({ card:c, st: loadCardStats(c.slug) }));
+  const filtered = stats.filter(x => (x.st.wrong||0) > 0);
+  filtered.sort((a,b)=> (b.st.wrong||0) - (a.st.wrong||0));
+  if(filtered.length === 0){
+    container.innerHTML = '<div class="muted tiny">No mistakes yet — good job!</div>';
+    return;
+  }
+  filtered.forEach(entry=>{
+    const c = entry.card;
+    const st = entry.st;
+    const div = document.createElement('div');
+    div.style.display='flex';
+    div.style.flexDirection='column';
+    div.style.background='var(--glass)';
+    div.style.border='1px solid var(--outline)';
+    div.style.padding='8px';
+    div.style.borderRadius='8px';
+    div.innerHTML = `
+      <div style="display:flex;gap:8px;align-items:center">
+        <img src="${c.image}" style="width:48px;height:48px;object-fit:contain">
+        <div style="flex:1">
+          <div style="font-weight:700">${c.name}</div>
+          <div class="muted tiny">Wrong: ${st.wrong||0} · Attempts: ${st.attempts||0} · Acc: ${st.attempts?Math.round((st.correct||0)/st.attempts*100):0}%</div>
+        </div>
+      </div>
+      <div style="margin-top:8px;display:flex;gap:8px">
+        <button class="btn small" data-slug="${c.slug}">Drill</button>
+        <button class="ghost small" data-slug-clear="${c.slug}">Clear stats</button>
+      </div>
+    `;
+    container.appendChild(div);
+    div.querySelector('button.btn').addEventListener('click', ()=> startDrill(c));
+    div.querySelector('button.ghost').addEventListener('click', ()=> {
+      if(confirm('Clear stats for this card?')){ localStorage.removeItem('card_stats_' + c.slug); renderMistakeList(); updateUI(); }
+    });
+  });
+}
+
+function renderAnalytics(){
+  const allStats = cards.map(c => loadCardStats(c.slug));
+  const totalAttemptsAll = allStats.reduce((s,st)=> s + (st.attempts||0), 0);
+  const totalCorrectAll = allStats.reduce((s,st)=> s + (st.correct||0), 0);
+  const totalErrAll = allStats.reduce((s,st)=> s + (st.sumErr||0), 0);
+  const accuracy = totalAttemptsAll? Math.round(totalCorrectAll/totalAttemptsAll*100) : 0;
+  const avgErr = totalAttemptsAll? (totalErrAll / totalAttemptsAll).toFixed(2) : '0';
+
+  $id('an_total').textContent = totalAttemptsAll;
+  $id('an_accuracy').textContent = accuracy + '%';
+  $id('an_avgerr').textContent = avgErr;
+
+  const withCards = cards.map(c => ({ card:c, st: loadCardStats(c.slug) }));
+  withCards.sort((a,b)=> (b.st.wrong||0) - (a.st.wrong||0));
+  const top = withCards.slice(0,6);
+  const barContainer = $id('an_bar');
+  barContainer.innerHTML = '';
+  const captions = $id('an_bar_captions');
+  captions.innerHTML = '';
+  const maxWrong = Math.max(1, ...top.map(x=>x.st.wrong||0));
+  top.forEach(t=>{
+    const barWrap = document.createElement('div');
+    barWrap.style.display = 'flex';
+    barWrap.style.flexDirection = 'column';
+    barWrap.style.alignItems = 'center';
+    barWrap.style.flex = '1';
+    const bar = document.createElement('div');
+    bar.className = 'bar';
+    const heightPerc = ((t.st.wrong||0)/maxWrong)*100;
+    bar.style.height = `${Math.max(6, heightPerc)}%`;
+    bar.title = `${t.card.name} — Wrong: ${t.st.wrong||0}`;
+    bar.textContent = (t.st.wrong||0) > 0 ? (t.st.wrong||0) : '';
+    barWrap.appendChild(bar);
+    barContainer.appendChild(barWrap);
+
+    const cap = document.createElement('div');
+    cap.className = 'bar-caption';
+    cap.textContent = t.card.name;
+    cap.style.flex = '1';
+    captions.appendChild(cap);
+  });
+
+  const hist = JSON.parse(localStorage.getItem('cr_history')||'[]');
+  const spark = $id('an_spark');
+  spark.innerHTML = '';
+  if(hist.length === 0){
+    spark.innerHTML = '<div class="muted tiny">No history yet</div>';
+  } else {
+    const svg = makeSparklineSVG(hist, 110, 28);
+    spark.appendChild(svg);
+  }
+}
+
+/* small sparkline helper */
+function makeSparklineSVG(arr,w,h){
+  const svgNS = "http://www.w3.org/2000/svg";
+  const svg = document.createElementNS(svgNS, 'svg');
+  svg.setAttribute('width', w); svg.setAttribute('height', h);
+  const max = 1;
+  const step = w / (arr.length-1 || 1);
+  let d = '';
+  for(let i=0;i<arr.length;i++){
+    const x = Math.round(i*step);
+    const y = Math.round(h - (arr[i]/max)*(h-4));
+    d += (i===0?`M ${x} ${y}`:` L ${x} ${y}`);
+  }
+  const path = document.createElementNS(svgNS,'path');
+  path.setAttribute('d', d);
+  path.setAttribute('stroke', 'var(--accent)');
+  path.setAttribute('fill', 'none');
+  path.setAttribute('stroke-width','2');
+  svg.appendChild(path);
+  return svg;
+}
+
+/* ------------------------------
+  showTip & renderProfile (restored)
+--------------------------------*/
+function showTip(){
+  const show = settingsTips.checked;
+  if(!show) { tipBox.textContent = ''; return; }
+  const tips = [
+    "Keep track of your opponent’s win conditions.",
+    "Elixir advantage wins games — spend efficiently.",
+    "Don’t overcommit early — save elixir for defense.",
+    "Predict opponent cycles to counter better.",
+    "Learn elixir costs to react faster in real matches.",
+    "Defend cheaply to build positive elixir trades.",
+    "Use tiny troops to absorb spells and save elixir.",
+    "Watch for opponent's support troops when pushing.",
+    "Practice multiple-choice for speed, typed input for precision.",
+    "Use the Elixir Meter to practice hand total calculations."
+  ];
+  const idx = Math.floor(Math.random() * tips.length);
+  tipBox.textContent = tips[idx];
+}
+
+function renderProfile(){
+  profileName.value = localStorage.getItem('profileName') || 'Player';
+  profileLevel.textContent = localStorage.getItem('profileLevel') || '1';
+  profileXPEl.textContent = Number(localStorage.getItem('profileXP')||0);
+  profileRank.textContent = localStorage.getItem('profileRank') || 'Bronze';
+}
+
+/* ------------------------------
+  Init & start
+--------------------------------*/
+renderLibrary();
+init();
+
+/* Expose some helpers for debugging */
+window.CREApp = { pickNextCard, cards, renderLibrary, renderMistakeList, renderAnalytics, applyTheme };
+
+</script>
+</body>
+</html>
